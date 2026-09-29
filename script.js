@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const timeText = document.getElementById('timeText');
     const themeToggle = document.getElementById('themeToggle');
     
-    let soundEnabled = true;
+    let soundEnabled = false;
     let userLocation = null;
     let userIP = null;
     let userBattery = null;
