@@ -112,15 +112,10 @@ document.addEventListener('DOMContentLoaded', function() {
         addContactButtonEventListeners();
     }
     
-    // Function to add event listeners to contact buttons
+    // Function to add event listeners to family contact buttons only
+    // (emergency-service buttons use inline onclick="makeCall(...)" instead)
     function addContactButtonEventListeners() {
-        // Remove existing event listeners to avoid duplicates
-        document.querySelectorAll('.call-button').forEach(button => {
-            button.removeEventListener('click', handleContactButtonClick);
-        });
-        
-        // Add new event listeners
-        document.querySelectorAll('.call-button').forEach(button => {
+        familyContactList.querySelectorAll('.call-button').forEach(button => {
             button.addEventListener('click', handleContactButtonClick);
         });
     }
@@ -480,6 +475,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Open dialer
         window.open(`tel:${formattedNumber}`, '_self');
     }
+    // Expose globally: the emergency-service buttons call makeCall() from inline onclick handlers
+    window.makeCall = makeCall;
     
     // Function to toggle sound on/off
     function toggleSound() {
@@ -494,62 +491,49 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Function to play SOS sound
+    // Function to play SOS sound (... --- ... morse pattern)
     function playSOSSound() {
-        // Create an audio context for generating SOS beep pattern
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 800; // Frequency in Hz
-        
-        gainNode.gain.value = 0.3; // Volume
-        
-        // SOS pattern: ... --- ... (three short, three long, three short)
-        const shortBeepDuration = 0.2; // seconds
-        const longBeepDuration = 0.6; // seconds
-        const beepInterval = 0.3; // seconds between beeps
-        
-        let currentTime = audioContext.currentTime;
-        
-        // Three short beeps
-        for (let i = 0; i < 3; i++) {
-            oscillator.start(currentTime);
-            oscillator.stop(currentTime + shortBeepDuration);
-            currentTime += shortBeepDuration + beepInterval;
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            if (ctx.state === 'suspended') ctx.resume();
+
+            const shortBeep = 0.18; // seconds
+            const longBeep = 0.55;  // seconds
+            const gap = 0.22;       // seconds between beeps
+            let t = ctx.currentTime + 0.05;
+
+            function beep(dur) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = 880;
+                gain.gain.setValueAtTime(0.0001, t);
+                gain.gain.exponentialRampToValueAtTime(0.4, t + 0.02);
+                gain.gain.setValueAtTime(0.4, Math.max(t + 0.02, t + dur - 0.03));
+                gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                osc.start(t);
+                osc.stop(t + dur + 0.05);
+                t += dur + gap;
+            }
+
+            // S: three short
+            for (let i = 0; i < 3; i++) beep(shortBeep);
+            t += gap;
+            // O: three long
+            for (let i = 0; i < 3; i++) beep(longBeep);
+            t += gap;
+            // S: three short
+            for (let i = 0; i < 3; i++) beep(shortBeep);
+
+            setTimeout(() => { ctx.close().catch(() => {}); }, Math.ceil((t - ctx.currentTime + 0.5) * 1000));
+        } catch (e) {
+            // Audio not available on this device/browser; stay silent
         }
-        
-        // Three long beeps
-        currentTime += beepInterval; // Extra pause between groups
-        for (let i = 0; i < 3; i++) {
-            oscillator.start(start);
-            oscillator.stop(start + duration);
-        }
-        
-        // Schedule beeps respecting the pattern ... --- ...
-        for (let i = 0; i < 3; i++) {
-            scheduleBeep(currentTime, shortBeepDuration);
-            currentTime += shortBeepDuration + beepInterval;
-        }
-        
-        currentTime += beepInterval;
-        
-        for (let i = 0; i < 3; i++) {
-            scheduleBeep(currentTime, longBeepDuration);
-            currentTime += longBeepDuration + beepInterval;
-        }
-        
-        currentTime += beepInterval;
-        
-        for (let i = 0; i < 3; i++) {
-            scheduleBeep(currentTime, shortBeepDuration);
-            currentTime += shortBeepDuration + beepInterval;
-        }
-}
+    }
 
                  // Function to show status message
     function showStatusMessage(message, type) {
