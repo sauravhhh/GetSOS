@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ipText = document.getElementById('ipText');
     const batteryText = document.getElementById('batteryText');
     const timeText = document.getElementById('timeText');
+    const themeToggle = document.getElementById('themeToggle');
     
     let soundEnabled = true;
     let userLocation = null;
@@ -29,6 +30,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update time every second
     setInterval(updateTime, 1000);
     
+    // Theme toggle (dark mode), persisted
+    function setThemeIcon() {
+        const dark = document.body.classList.contains('dark');
+        themeToggle.querySelector('i').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    if (localStorage.getItem('getsos-theme') === 'dark') {
+        document.body.classList.add('dark');
+    }
+    setThemeIcon();
+    themeToggle.addEventListener('click', function() {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('getsos-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        setThemeIcon();
+    });
+
     // SOS button click event
     sosButton.addEventListener('click', function() {
         sendSOSAlert();
@@ -96,11 +112,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="contact-number">${formatPhoneNumber(contact)}</div>
                     </div>
                 </div>
-                <div>
-                    <button class="call-button" data-action="call" data-number="${contact}">
+                <div class="btn-row">
+                    <button class="icon-btn primary" data-action="call" data-number="${contact}" aria-label="Call contact">
                         <i class="fas fa-phone"></i>
                     </button>
-                    <button class="call-button" data-action="delete" data-index="${index}">
+                    <button class="icon-btn danger" data-action="delete" data-index="${index}" aria-label="Remove contact">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -115,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to add event listeners to family contact buttons only
     // (emergency-service buttons use inline onclick="makeCall(...)" instead)
     function addContactButtonEventListeners() {
-        familyContactList.querySelectorAll('.call-button').forEach(button => {
+        familyContactList.querySelectorAll('.icon-btn').forEach(button => {
             button.addEventListener('click', handleContactButtonClick);
         });
     }
@@ -332,47 +348,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to show sharing options
     function showSharingOptions(message) {
-        // Create a modal or dialog for sharing options
         const modal = document.createElement('div');
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        `;
-        
+        modal.className = 'sos-modal';
+
         const modalContent = document.createElement('div');
-        modalContent.style.cssText = `
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 80%;
-            width: 300px;
-            text-align: center;
-        `;
-        
+        modalContent.className = 'sos-modal-content';
+
         modalContent.innerHTML = `
-            <h3 style="margin-bottom: 15px;">Send Emergency Alert</h3>
-            <p style="margin-bottom: 20px;">Choose how to send your emergency alert:</p>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="sendSMSBtn" class="update-location-btn" style="margin: 5px 0;">
-                    <i class="fas fa-sms"></i> Send via SMS
-                </button>
-                <button id="sendWhatsAppBtn" class="update-location-btn" style="margin: 5px 0; background-color: #25D366; color: white;">
-                    <i class="fab fa-whatsapp"></i> Send via WhatsApp
-                </button>
-                <button id="cancelBtn" class="update-location-btn" style="margin: 5px 0; background-color: #f44336; color: white;">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            </div>
+            <h3>Send Emergency Alert</h3>
+            <p>Choose how to send your emergency alert:</p>
+            <button id="sendSMSBtn" class="modal-btn sms">
+                <i class="fas fa-sms"></i> Send via SMS
+            </button>
+            <button id="sendWhatsAppBtn" class="modal-btn wa">
+                <i class="fab fa-whatsapp"></i> Send via WhatsApp
+            </button>
+            <button id="cancelBtn" class="modal-btn cancel">
+                <i class="fas fa-times"></i> Cancel
+            </button>
         `;
-        
+
         modal.appendChild(modalContent);
         document.body.appendChild(modal);
         
@@ -481,13 +476,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to toggle sound on/off
     function toggleSound() {
         soundEnabled = !soundEnabled;
-        
+
         if (soundEnabled) {
             soundToggle.classList.add('active');
-            soundToggle.innerHTML = '<i class="fas fa-volume-up"></i> Sound ON';
+            soundToggle.querySelector('span').textContent = 'Sound ON';
+            soundToggle.querySelector('i').className = 'fas fa-volume-up';
         } else {
             soundToggle.classList.remove('active');
-            soundToggle.innerHTML = '<i class="fas fa-volume-mute"></i> Sound OFF';
+            soundToggle.querySelector('span').textContent = 'Sound OFF';
+            soundToggle.querySelector('i').className = 'fas fa-volume-mute';
         }
     }
     
