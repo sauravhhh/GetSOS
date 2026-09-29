@@ -128,25 +128,29 @@ body {
     color: var(--muted);
 }
 
-/* ---------- whatsapp alternative ---------- */
-.sms-alt {
+/* ---------- sound toggle ---------- */
+.sound-control {
     display: flex;
     justify-content: center;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
-.sms-link {
-    background: none;
-    border: none;
+.sound-toggle {
+    border: 1px solid var(--hairline);
+    background: var(--card);
+    border-radius: 999px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
     cursor: pointer;
-    color: var(--muted);
     font-size: 0.83rem;
     font-weight: 600;
-    font-family: inherit;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    padding: 8px;
+    color: var(--muted);
+    gap: 8px;
+    box-shadow: var(--shadow);
 }
+
+.sound-toggle.active { color: var(--text); }
 
 /* ---------- status ---------- */
 .status-message {
