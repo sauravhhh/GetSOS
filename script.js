@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusMessage = document.getElementById('statusMessage');
     const locationText = document.getElementById('locationText');
     const updateLocationBtn = document.getElementById('updateLocationBtn');
-    const soundToggle = document.getElementById('soundToggle');
     const familyContactInput = document.getElementById('familyContactInput');
     const addContactBtn = document.getElementById('addContactBtn');
     const familyContactList = document.getElementById('familyContactList');
@@ -12,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const timeText = document.getElementById('timeText');
     const themeToggle = document.getElementById('themeToggle');
     
-    let soundEnabled = false;
     let userLocation = null;
     let userIP = null;
     let userBattery = null;
@@ -45,28 +43,20 @@ document.addEventListener('DOMContentLoaded', function() {
         setThemeIcon();
     });
 
-    // SOS button click event: opens WhatsApp straight to the first emergency
+    // SOS button click event: opens the SMS app straight to the first emergency
     // contact with the alert pre-filled — no extra taps inside the app.
     // (The blank tab is opened synchronously so popup blockers allow it,
-    // then navigated to WhatsApp once the message is ready.)
+    // then navigated to the SMS app once the message is ready.)
     sosButton.addEventListener('click', function() {
-        const sendWin = window.open('about:blank', '_blank');
-        sendSOSAlert(sendWin, 'whatsapp');
-        if (soundEnabled) {
-            playSOSSound();
-        }
-    });
-
-    // SMS alternative: same zero-tap flow, opens the SMS app instead
-    const smsBtn = document.getElementById('smsBtn');
-    smsBtn.addEventListener('click', function() {
         const sendWin = window.open('about:blank', '_blank');
         sendSOSAlert(sendWin, 'sms');
     });
-    
-    // Sound toggle click event
-    soundToggle.addEventListener('click', function() {
-        toggleSound();
+
+    // WhatsApp alternative: same zero-tap flow, opens WhatsApp instead
+    const waBtn = document.getElementById('waBtn');
+    waBtn.addEventListener('click', function() {
+        const sendWin = window.open('about:blank', '_blank');
+        sendSOSAlert(sendWin, 'whatsapp');
     });
     
     // Add contact button click event
@@ -451,65 +441,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Expose globally: the emergency-service buttons call makeCall() from inline onclick handlers
     window.makeCall = makeCall;
     
-    // Function to toggle sound on/off
-    function toggleSound() {
-        soundEnabled = !soundEnabled;
-
-        if (soundEnabled) {
-            soundToggle.classList.add('active');
-            soundToggle.querySelector('span').textContent = 'Sound ON';
-            soundToggle.querySelector('i').className = 'fas fa-volume-up';
-        } else {
-            soundToggle.classList.remove('active');
-            soundToggle.querySelector('span').textContent = 'Sound OFF';
-            soundToggle.querySelector('i').className = 'fas fa-volume-mute';
-        }
-    }
-    
-    // Function to play SOS sound (... --- ... morse pattern)
-    function playSOSSound() {
-        try {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (!AudioCtx) return;
-            const ctx = new AudioCtx();
-            if (ctx.state === 'suspended') ctx.resume();
-
-            const shortBeep = 0.18; // seconds
-            const longBeep = 0.55;  // seconds
-            const gap = 0.22;       // seconds between beeps
-            let t = ctx.currentTime + 0.05;
-
-            function beep(dur) {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.value = 880;
-                gain.gain.setValueAtTime(0.0001, t);
-                gain.gain.exponentialRampToValueAtTime(0.4, t + 0.02);
-                gain.gain.setValueAtTime(0.4, Math.max(t + 0.02, t + dur - 0.03));
-                gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-                osc.start(t);
-                osc.stop(t + dur + 0.05);
-                t += dur + gap;
-            }
-
-            // S: three short
-            for (let i = 0; i < 3; i++) beep(shortBeep);
-            t += gap;
-            // O: three long
-            for (let i = 0; i < 3; i++) beep(longBeep);
-            t += gap;
-            // S: three short
-            for (let i = 0; i < 3; i++) beep(shortBeep);
-
-            setTimeout(() => { ctx.close().catch(() => {}); }, Math.ceil((t - ctx.currentTime + 0.5) * 1000));
-        } catch (e) {
-            // Audio not available on this device/browser; stay silent
-        }
-    }
-
                  // Function to show status message
     function showStatusMessage(message, type) {
         statusMessage.textContent = message;
