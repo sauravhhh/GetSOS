@@ -1,37 +1,30 @@
 :root {
-    --accent: #FF0000;
-    --accent-dark: #CC0000;
-    --bg: #F9F9F9;
-    --card: #FFFFFF;
-    --text: #030303;
-    --muted: #606060;
-    --faint: #AAAAAA;
-    --border: #E5E5E5;
-    --input-bg: #FFFFFF;
-    --icon-bg: #F2F2F2;
-    --shadow: 0 1px 2px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.05);
-    --shadow-hover: 0 4px 8px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
-    --success: #4CAF50;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --text: #131313;
+    --muted: #8b8b8b;
+    --hairline: #ececec;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --sos: #e5342e;
+    --success: #1d9e4b;
+    --input-bg: #f7f8fa;
 }
 
 body.dark {
-    --bg: #0F0F0F;
-    --card: #212121;
-    --text: #F1F1F1;
-    --muted: #AAAAAA;
-    --faint: #717171;
-    --border: #3D3D3D;
-    --input-bg: #121212;
-    --icon-bg: #2E2E2E;
-    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
-    --shadow-hover: 0 4px 8px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
+    --bg: #0e0e0e;
+    --card: #161616;
+    --text: #f4f4f4;
+    --muted: #9a9a9a;
+    --hairline: #262626;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --input-bg: #1c1c1c;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -41,57 +34,46 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 16px 96px;
+    padding: 0 16px 92px;
     transition: background-color 0.25s ease, color 0.25s ease;
     -webkit-font-smoothing: antialiased;
 }
 
 .wrap {
     width: 100%;
-    max-width: 600px;
+    max-width: 460px;
 }
 
 /* ---------- app bar ---------- */
 .appbar {
-    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding-top: 28px;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.brand .sos-icon {
-    color: var(--accent);
-    font-size: 30px;
+    justify-content: space-between;
+    padding: 22px 2px 0;
 }
 
 .brand h1 {
-    font-size: 24px;
-    font-weight: 500;
-    letter-spacing: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
-.brand-sub {
-    text-align: center;
-    font-size: 14px;
+.brand h1 .dot { color: var(--sos); }
+
+.brand p {
+    font-size: 0.72rem;
     color: var(--muted);
-    margin-top: 8px;
+    font-weight: 600;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    margin-top: 3px;
 }
 
 .theme-toggle {
-    position: absolute;
-    right: 0;
-    top: 28px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 1px solid var(--border);
+    border: 1px solid var(--hairline);
     background: var(--card);
     color: var(--text);
     cursor: pointer;
@@ -104,7 +86,7 @@ body {
 
 /* ---------- SOS ---------- */
 .sos-hero {
-    margin-top: 30px;
+    margin-top: 26px;
     text-align: center;
 }
 
@@ -112,11 +94,11 @@ body {
     width: 188px;
     height: 188px;
     border-radius: 50%;
-    background-color: var(--accent);
+    background-color: var(--sos);
     color: #fff;
     border: none;
-    font-size: 2.1rem;
-    font-weight: 700;
+    font-size: 2.3rem;
+    font-weight: 800;
     letter-spacing: 3px;
     cursor: pointer;
     display: inline-flex;
@@ -124,25 +106,25 @@ body {
     justify-content: center;
     align-items: center;
     gap: 6px;
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+    box-shadow: 0 10px 28px rgba(229, 52, 46, 0.35);
     animation: pulse 2.4s infinite;
-    transition: transform 0.15s ease, box-shadow 0.3s ease;
+    transition: transform 0.15s ease;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
 }
 
 .sos-button:active { transform: scale(0.94); }
-.sos-button i { font-size: 2.2rem; }
+.sos-button i { font-size: 2.4rem; }
 
 @keyframes pulse {
-    0%   { box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3), 0 0 0 0 rgba(255, 0, 0, 0.3); }
-    70%  { box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3), 0 0 0 18px rgba(255, 0, 0, 0); }
-    100% { box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3), 0 0 0 0 rgba(255, 0, 0, 0); }
+    0%   { box-shadow: 0 10px 28px rgba(229, 52, 46, 0.35), 0 0 0 0 rgba(229, 52, 46, 0.35); }
+    70%  { box-shadow: 0 10px 28px rgba(229, 52, 46, 0.35), 0 0 0 18px rgba(229, 52, 46, 0); }
+    100% { box-shadow: 0 10px 28px rgba(229, 52, 46, 0.35), 0 0 0 0 rgba(229, 52, 46, 0); }
 }
 
 .sos-caption {
     margin-top: 16px;
-    font-size: 14px;
+    font-size: 0.88rem;
     color: var(--muted);
 }
 
@@ -150,21 +132,19 @@ body {
 .sound-control {
     display: flex;
     justify-content: center;
-    margin-top: 14px;
+    margin-top: 12px;
 }
 
 .sound-toggle {
-    border: 1px solid var(--border);
+    border: 1px solid var(--hairline);
     background: var(--card);
-    border-radius: 8px;
-    padding: 10px 18px;
+    border-radius: 999px;
+    padding: 8px 16px;
     display: flex;
     align-items: center;
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 0.83rem;
+    font-weight: 600;
     color: var(--muted);
     gap: 8px;
     box-shadow: var(--shadow);
@@ -175,41 +155,41 @@ body {
 /* ---------- status ---------- */
 .status-message {
     text-align: center;
-    margin: 18px 0 0;
-    padding: 14px 16px;
-    border-radius: 8px;
+    margin: 16px 0 0;
+    padding: 13px 16px;
+    border-radius: 14px;
     background: var(--card);
+    border: 1px solid var(--hairline);
     box-shadow: var(--shadow);
-    font-size: 14px;
+    font-size: 0.9rem;
     font-weight: 500;
     display: none;
 }
 
 .status-message.active { display: block; }
 .status-message.success { color: var(--success); }
-.status-message.error { color: var(--accent); }
+.status-message.error { color: var(--sos); }
 
 /* ---------- cards ---------- */
 .card {
     margin-top: 18px;
     background: var(--card);
-    border-radius: 12px;
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
     box-shadow: var(--shadow);
-    padding: 24px;
-    transition: box-shadow 0.3s ease;
+    padding: 20px;
 }
 
-.card:hover { box-shadow: var(--shadow-hover); }
-
 .card h2 {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
 }
 
 .card .hint {
-    font-size: 14px;
+    font-size: 0.82rem;
     color: var(--muted);
-    margin: 6px 0 16px;
+    margin: 4px 0 14px;
 }
 
 .contact-list { list-style: none; }
@@ -220,7 +200,7 @@ body {
     align-items: center;
     gap: 10px;
     padding: 12px 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--hairline);
 }
 
 .contact-item:last-child { border-bottom: none; }
@@ -235,7 +215,7 @@ body {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background-color: var(--icon-bg);
+    background-color: var(--input-bg);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -245,10 +225,10 @@ body {
     font-size: 0.95rem;
 }
 
-.contact-name { font-weight: 500; font-size: 15px; }
+.contact-name { font-weight: 600; font-size: 0.94rem; }
 
 .contact-number {
-    font-size: 13px;
+    font-size: 0.84rem;
     color: var(--muted);
     margin-top: 2px;
     font-variant-numeric: tabular-nums;
@@ -258,7 +238,7 @@ body {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    border: 1px solid var(--border);
+    border: 1px solid var(--hairline);
     background: var(--card);
     color: var(--text);
     cursor: pointer;
@@ -267,67 +247,53 @@ body {
     align-items: center;
     font-size: 0.95rem;
     flex-shrink: 0;
-    transition: background-color 0.2s ease;
 }
 
 .icon-btn.primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
 }
 
-.icon-btn.primary:active { background: var(--accent-dark); }
-
-.icon-btn.danger { color: var(--accent); }
+.icon-btn.danger { color: var(--sos); }
 .btn-row { display: flex; gap: 8px; }
 
 /* ---------- inputs ---------- */
-.contact-input-group {
-    display: flex;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    height: 48px;
-    margin: 2px 0 6px;
-    background: var(--input-bg);
-}
+.contact-input-group { display: flex; margin: 2px 0 6px; }
 
 .contact-input {
     flex: 1;
-    padding: 0 16px;
-    border: none;
-    font-size: 16px;
+    padding: 12px 14px;
+    border: 1px solid var(--hairline);
+    border-radius: 12px 0 0 12px;
+    font-size: 0.94rem;
     outline: none;
-    background: transparent;
+    background: var(--input-bg);
     color: var(--text);
     min-width: 0;
     font-family: inherit;
-    height: 100%;
 }
+
+.contact-input:focus { border-color: var(--text); background: var(--card); }
 
 .add-contact-button {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding: 0 20px;
+    background: var(--text);
+    color: var(--bg);
+    border: 1px solid var(--text);
+    border-radius: 0 12px 12px 0;
+    padding: 0 18px;
     cursor: pointer;
     font-size: 0.95rem;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
-
-.add-contact-button:active { background: var(--accent-dark); }
 
 /* ---------- location ---------- */
 .loc-row {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--hairline);
+    font-size: 0.89rem;
 }
 
 .loc-row:last-of-type { border-bottom: none; }
@@ -345,26 +311,73 @@ body {
 
 .update-location-btn {
     width: 100%;
-    background: var(--accent);
-    border: none;
-    border-radius: 8px;
-    height: 48px;
-    margin-top: 16px;
-    color: #fff;
+    background: var(--card);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 14px;
+    color: var(--text);
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 0.88rem;
+    font-weight: 600;
     font-family: inherit;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background-color 0.2s ease;
 }
 
-.update-location-btn:active { background: var(--accent-dark); }
+.update-location-btn:active { transform: scale(0.98); }
+
+/* ---------- modal ---------- */
+.sos-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.sos-modal-content {
+    background-color: var(--card);
+    color: var(--text);
+    padding: 24px 20px 18px;
+    border-radius: 20px;
+    border: 1px solid var(--hairline);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.sos-modal-content h3 { font-size: 1.08rem; margin-bottom: 8px; letter-spacing: -0.2px; }
+.sos-modal-content p { font-size: 0.87rem; color: var(--muted); margin-bottom: 16px; }
+
+.modal-btn {
+    width: 100%;
+    border-radius: 12px;
+    padding: 13px;
+    margin: 5px 0;
+    font-size: 0.93rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--hairline);
+    background: var(--card);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.modal-btn.sms { background: var(--text); color: var(--bg); border-color: var(--text); }
+.modal-btn.wa { background: #1d9e4b; border-color: #1d9e4b; color: #fff; }
+.modal-btn.cancel { color: var(--sos); }
 
 /* ---------- footer ---------- */
 .footer {
@@ -374,14 +387,13 @@ body {
     text-align: center;
     padding: 15px 0;
     background-color: var(--bg);
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--hairline);
 }
 
-.footer p { color: var(--muted); font-size: 13px; }
-.footer i { color: var(--accent); }
+.footer p { color: var(--muted); font-size: 0.8rem; }
+.footer i { color: var(--sos); }
 
 @media (max-width: 480px) {
-    .sos-button { width: 172px; height: 172px; font-size: 1.9rem; }
-    .sos-button i { font-size: 2rem; }
-    .card { padding: 20px; }
+    .sos-button { width: 172px; height: 172px; font-size: 2rem; }
+    .sos-button i { font-size: 2.2rem; }
 }
