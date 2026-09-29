@@ -151,6 +151,26 @@ body {
 
 .sound-toggle.active { color: var(--text); }
 
+/* ---------- sms alternative ---------- */
+.sms-alt {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.sms-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.83rem;
+    font-weight: 600;
+    font-family: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 8px;
+}
+
 /* ---------- status ---------- */
 .status-message {
     text-align: center;
