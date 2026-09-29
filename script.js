@@ -51,10 +51,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // then navigated to WhatsApp once the message is ready.)
     sosButton.addEventListener('click', function() {
         const sendWin = window.open('about:blank', '_blank');
-        sendSOSAlert(sendWin);
+        sendSOSAlert(sendWin, 'whatsapp');
         if (soundEnabled) {
             playSOSSound();
         }
+    });
+
+    // SMS alternative: same zero-tap flow, opens the SMS app instead
+    const smsBtn = document.getElementById('smsBtn');
+    smsBtn.addEventListener('click', function() {
+        const sendWin = window.open('about:blank', '_blank');
+        sendSOSAlert(sendWin, 'sms');
     });
     
     // Sound toggle click event
@@ -320,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Function to send SOS alert
-    function sendSOSAlert(sendWin) {
+    function sendSOSAlert(sendWin, method) {
         // Show status message
         statusMessage.textContent = "Preparing emergency alert...";
         statusMessage.classList.remove('success', 'error');
@@ -341,15 +348,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Wait a bit for location, then proceed even if we don't get it
             setTimeout(() => {
-                prepareAndSendAlert(sendWin);
+                prepareAndSendAlert(sendWin, method);
             }, 2000);
         } else {
-            prepareAndSendAlert(sendWin);
+            prepareAndSendAlert(sendWin, method);
         }
     }
     
-    // Function to prepare and send alert via WhatsApp, no extra taps
-    function prepareAndSendAlert(sendWin) {
+    // Function to prepare and send alert, no extra taps
+    function prepareAndSendAlert(sendWin, method) {
         // Get current time for the message
         const now = new Date();
         const currentTimeString = now.toLocaleString('en-IN');
@@ -369,23 +376,48 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create message with all available information
         const message = `EMERGENCY SOS ALERT!\n\nI need help! This is an emergency alert.\n\nMy Location:\n${locationInfo}${mapLink}\n\nTime: ${currentTimeString}\nBattery: ${userBattery || "Status not available"}\nIP: ${userIP || "Unable to fetch"}`;
         
-        // Open WhatsApp straight to the first emergency contact, message pre-filled
+        // Open the right app straight to the first emergency contact, message pre-filled
         const contact = familyContacts[0];
-        const formattedNumber = formatPhoneNumberForWhatsApp(contact);
-        const whatsappUrl = `https://wa.me/${formattedNumber}?text=${encodeURIComponent(message)}`;
-        try {
-            if (sendWin && !sendWin.closed) {
-                sendWin.location.href = whatsappUrl;
-            } else {
+        if (method === 'sms') {
+            const smsUrl = `sms:${formatPhoneNumberForSMS(contact)}?body=${encodeURIComponent(message)}`;
+            try {
+                if (sendWin && !sendWin.closed) {
+                    sendWin.location.href = smsUrl;
+                } else {
+                    window.open(smsUrl, '_self');
+                }
+            } catch (e) {
+                window.open(smsUrl, '_self');
+            }
+            showStatusMessage('SMS app opened with your emergency alert', 'success');
+        } else {
+            const formattedNumber = formatPhoneNumberForWhatsApp(contact);
+            const whatsappUrl = `https://wa.me/${formattedNumber}?text=${encodeURIComponent(message)}`;
+            try {
+                if (sendWin && !sendWin.closed) {
+                    sendWin.location.href = whatsappUrl;
+                } else {
+                    window.open(whatsappUrl, '_blank');
+                }
+            } catch (e) {
                 window.open(whatsappUrl, '_blank');
             }
-        } catch (e) {
-            window.open(whatsappUrl, '_blank');
+            showStatusMessage('WhatsApp opened with your emergency alert', 'success');
         }
-        
-        showStatusMessage('WhatsApp opened with your emergency alert', 'success');
     }
     
+    // Function to format phone number for SMS
+    function formatPhoneNumberForSMS(number) {
+        if (number.length === 10) {
+            return `+91${number}`;
+        } else if (number.length > 10 && number.startsWith('91')) {
+            return `+${number}`;
+        } else if (number.length > 10 && number.startsWith('0')) {
+            return `+91${number.substring(1)}`;
+        }
+        return number;
+    }
+
     // Function to format phone number for WhatsApp
     function formatPhoneNumberForWhatsApp(number) {
         // For WhatsApp, we need the number in international format without the +
