@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>India Emergency SOS Tool</title>
+    <title>GetSOS — India Emergency SOS Tool</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="wrap">
     <div class="header">
-        <div class="india-flag">
-            <div class="flag-stripe flag-orange"></div>
-            <div class="flag-stripe flag-white">
-                <div class="ashoka-chakra"></div>
-            </div>
-            <div class="flag-stripe flag-green"></div>
-        </div>
-        <h1>India Emergency SOS</h1>
-        <p>Press the button in case of emergency</p>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <i class="fas fa-moon"></i>
+        </button>
+        <h1>GetSOS<span class="dot">.</span></h1>
+        <p>Emergency help for India, one tap away</p>
     </div>
 
     <div class="sos-container">
@@ -30,19 +27,18 @@
     <div class="sound-control">
         <div class="sound-toggle active" id="soundToggle">
             <i class="fas fa-volume-up"></i>
-            Sound ON
+            <span>Sound ON</span>
         </div>
     </div>
 
-    <div class="status-message" id="statusMessage">
-        Alert sent to emergency contacts
-    </div>
+    <div class="status-message" id="statusMessage"></div>
 
-    <div class="family-contact-section">
+    <div class="card">
         <h2>My Emergency Contacts</h2>
+        <p class="hint">SOS alerts are sent to these numbers via SMS or WhatsApp.</p>
         <div class="contact-input-group">
-            <input type="tel" class="contact-input" id="familyContactInput" placeholder="Enter emergency contact number">
-            <button class="add-contact-button" id="addContactBtn">
+            <input type="tel" class="contact-input" id="familyContactInput" placeholder="Enter emergency contact number" inputmode="tel">
+            <button class="add-contact-button" id="addContactBtn" aria-label="Add contact">
                 <i class="fas fa-plus"></i>
             </button>
         </div>
@@ -51,8 +47,9 @@
         </ul>
     </div>
 
-    <div class="emergency-contacts">
+    <div class="card">
         <h2>Emergency Services</h2>
+        <p class="hint">Tap to call instantly.</p>
         <ul class="contact-list">
             <li class="contact-item">
                 <div class="contact-info">
@@ -60,11 +57,11 @@
                         <i class="fas fa-phone-alt"></i>
                     </div>
                     <div>
-                        <div class="contact-name">All Emergency Services</div>
+                        <div class="contact-name">All Emergencies</div>
                         <div class="contact-number">112</div>
                     </div>
                 </div>
-                <button class="call-button" onclick="makeCall('112')">
+                <button class="icon-btn primary" onclick="makeCall('112')" aria-label="Call 112">
                     <i class="fas fa-phone"></i>
                 </button>
             </li>
@@ -78,7 +75,7 @@
                         <div class="contact-number">100</div>
                     </div>
                 </div>
-                <button class="call-button" onclick="makeCall('100')">
+                <button class="icon-btn primary" onclick="makeCall('100')" aria-label="Call 100">
                     <i class="fas fa-phone"></i>
                 </button>
             </li>
@@ -92,7 +89,7 @@
                         <div class="contact-number">108 / 102</div>
                     </div>
                 </div>
-                <button class="call-button" onclick="makeCall('108')">
+                <button class="icon-btn primary" onclick="makeCall('108')" aria-label="Call 108">
                     <i class="fas fa-phone"></i>
                 </button>
             </li>
@@ -106,7 +103,7 @@
                         <div class="contact-number">101</div>
                     </div>
                 </div>
-                <button class="call-button" onclick="makeCall('101')">
+                <button class="icon-btn primary" onclick="makeCall('101')" aria-label="Call 101">
                     <i class="fas fa-phone"></i>
                 </button>
             </li>
@@ -120,7 +117,7 @@
                         <div class="contact-number">1091</div>
                     </div>
                 </div>
-                <button class="call-button" onclick="makeCall('1091')">
+                <button class="icon-btn primary" onclick="makeCall('1091')" aria-label="Call 1091">
                     <i class="fas fa-phone"></i>
                 </button>
             </li>
@@ -134,43 +131,43 @@
                         <div class="contact-number">1098</div>
                     </div>
                 </div>
-                <button class="call-button" onclick="makeCall('1098')">
+                <button class="icon-btn primary" onclick="makeCall('1098')" aria-label="Call 1098">
                     <i class="fas fa-phone"></i>
                 </button>
             </li>
         </ul>
     </div>
 
-    <div class="location-info">
-        <h2>My Location & Device Info</h2>
-        <div class="location-details">
+    <div class="card">
+        <h2>My Location &amp; Device</h2>
+        <p class="hint">Included in every SOS alert you send.</p>
+        <div class="loc-row">
             <i class="fas fa-map-marker-alt"></i>
-            <div class="location-text" id="locationText">Getting your location...</div>
+            <div class="loc-text" id="locationText">Getting your location...</div>
         </div>
-        <div class="device-info">
-            <div class="device-info-item">
-                <i class="fas fa-wifi"></i>
-                <div class="location-text" id="ipText">Getting IP address...</div>
-            </div>
-            <div class="device-info-item">
-                <i class="fas fa-battery-three-quarters"></i>
-                <div class="location-text" id="batteryText">Getting battery status...</div>
-            </div>
-            <div class="device-info-item">
-                <i class="fas fa-clock"></i>
-                <div class="location-text" id="timeText"></div>
-            </div>
+        <div class="loc-row">
+            <i class="fas fa-wifi"></i>
+            <div class="loc-text" id="ipText">Getting IP address...</div>
+        </div>
+        <div class="loc-row">
+            <i class="fas fa-battery-three-quarters"></i>
+            <div class="loc-text" id="batteryText">Getting battery status...</div>
+        </div>
+        <div class="loc-row">
+            <i class="fas fa-clock"></i>
+            <div class="loc-text" id="timeText"></div>
         </div>
         <button class="update-location-btn" id="updateLocationBtn">
             <i class="fas fa-sync-alt"></i>
             Update Location
         </button>
     </div>
+  </div>
 
     <div class="footer">
-        <p>Made with <i class="fas fa-heart"></i> by Sauravhhh</p>
+        <p>Made with <i class="fas fa-heart"></i> by sauravhhh</p>
     </div>
 
     <script src="script.js"></script>
 </body>
-  </html>
+</html>
