@@ -214,40 +214,59 @@ document.addEventListener('DOMContentLoaded', function() {
         return number;
     }
     
-    // Function to get user's location
+    // Function to get user's location: GPS first, free IP geolocation API as fallback
     function getLocation() {
+        locationText.textContent = "Getting your location...";
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, showError);
+            navigator.geolocation.getCurrentPosition(showPosition, useIPGeolocation, { timeout: 8000 });
         } else {
-            locationText.textContent = "Geolocation is not supported by this browser.";
+            useIPGeolocation();
         }
     }
-    
-    // Function to show position
+
+    // Free IP geolocation (no key, no permission prompt)
+    async function useIPGeolocation() {
+        locationText.textContent = "Getting approximate location...";
+        const apis = [
+            { url: 'https://ipwho.is/',
+              parse: d => ({ lat: d.latitude, lon: d.longitude, place: [d.city, d.region, d.country].filter(Boolean).join(', '), ip: d.ip }) },
+            { url: 'https://ipapi.co/json/',
+              parse: d => ({ lat: d.latitude, lon: d.longitude, place: [d.city, d.region, d.country_name].filter(Boolean).join(', '), ip: d.ip }) }
+        ];
+        for (const api of apis) {
+            try {
+                const res = await fetch(api.url);
+                if (!res.ok) continue;
+                const loc = api.parse(await res.json());
+                if (loc.lat && loc.lon) {
+                    userLocation = { lat: loc.lat, lon: loc.lon, accuracy: null, source: 'IP', place: loc.place };
+                    if (loc.ip) { userIP = loc.ip; ipText.textContent = `IP Address: ${userIP}`; }
+                    renderLocation();
+                    return;
+                }
+            } catch (e) { /* try next API */ }
+        }
+        locationText.textContent = "Location unavailable.";
+    }
+
+    // Function to show GPS position
     function showPosition(position) {
         userLocation = {
             lat: position.coords.latitude,
             lon: position.coords.longitude,
-            accuracy: position.coords.accuracy
+            accuracy: position.coords.accuracy,
+            source: 'GPS'
         };
-        locationText.textContent = `Lat: ${userLocation.lat.toFixed(6)}, Lon: ${userLocation.lon.toFixed(6)} (Accuracy: ${Math.round(userLocation.accuracy)}m)`;
+        renderLocation();
     }
-    
-    // Function to handle geolocation errors
-    function showError(error) {
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                locationText.textContent = "User denied the request for Geolocation.";
-                break;
-            case error.POSITION_UNAVAILABLE:
-                locationText.textContent = "Location information is unavailable.";
-                break;
-            case error.TIMEOUT:
-                locationText.textContent = "The request to get user location timed out.";
-                break;
-            case error.UNKNOWN_ERROR:
-                locationText.textContent = "An unknown error occurred.";
-                break;
+
+    function renderLocation() {
+        if (!userLocation) return;
+        const coords = `Lat: ${userLocation.lat.toFixed(5)}, Lon: ${userLocation.lon.toFixed(5)}`;
+        if (userLocation.source === 'GPS') {
+            locationText.textContent = `${coords} (GPS, ±${Math.round(userLocation.accuracy)}m)`;
+        } else {
+            locationText.textContent = `${coords} — approx: ${userLocation.place || 'unknown area'} (IP-based)`;
         }
     }
     
@@ -335,7 +354,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let mapLink = "";
         
         if (userLocation) {
-            locationInfo = `Latitude: ${userLocation.lat}\nLongitude: ${userLocation.lon}\nAccuracy: ${Math.round(userLocation.accuracy)}m`;
+            const src = userLocation.source === 'GPS'
+                ? `GPS (±${Math.round(userLocation.accuracy)}m)`
+                : `IP-based approx${userLocation.place ? ' — ' + userLocation.place : ''}`;
+            locationInfo = `Latitude: ${userLocation.lat}\nLongitude: ${userLocation.lon}\nSource: ${src}`;
             mapLink = `\n\nMap: https://maps.google.com/?q=${userLocation.lat},${userLocation.lon}`;
         }
         
