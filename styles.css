@@ -128,30 +128,7 @@ body {
     color: var(--muted);
 }
 
-.sound-control {
-    display: flex;
-    justify-content: center;
-    margin-top: 12px;
-}
-
-.sound-toggle {
-    border: 1px solid var(--hairline);
-    background: var(--card);
-    border-radius: 999px;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.83rem;
-    font-weight: 600;
-    color: var(--muted);
-    gap: 8px;
-    box-shadow: var(--shadow);
-}
-
-.sound-toggle.active { color: var(--text); }
-
-/* ---------- sms alternative ---------- */
+/* ---------- whatsapp alternative ---------- */
 .sms-alt {
     display: flex;
     justify-content: center;
